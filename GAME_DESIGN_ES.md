@@ -1,7 +1,19 @@
 # GAME DESIGN DOCUMENT
 
 ## Título del Proyecto
-**Survival Seas** *(nombre tentativo)*
+- **(nombres tentativos)**
+- **Rogue Seas**
+- **Whispers of the Deep**
+- **Bloodtide Buccaneers**
+- **Rogue Tide**
+- **The Devil's Shanty**
+- **Forgotten Isles**
+- **Scourge of the Seven Seas**
+- **Embertide**
+- **Oceanbound**
+- **Tidal Wrath**
+- **Uncharted Whispers**
+- **Lost Legacies**
 
 ## Género
 Sandbox de supervivencia multijugador en mundo abierto, con temática pirata y progresión hacia lo místico.
@@ -34,7 +46,7 @@ La narrativa principal incluye referencias a piratas reales y de la literatura. 
 - Interacción con el agua.
 
 ### Progresión y Clases
-- Ramas de especialización sin clases rígidas (ej: botánico, herrero, navegante).
+- Ramas de especialización sin clases rígidas (ej: cañonero, herrero, navegante).
 - Eventualmente puedes desbloquear todas las ramas.
 - Interacción con NPCs que pueden asumir funciones en el barco desde el timón.
 
