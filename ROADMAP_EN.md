@@ -12,9 +12,9 @@ Development will be organized in phases of increasing complexity, starting with 
 - [x] Player movement with physics.
 - [x] Free-rotation camera system.
 - [x] Animated water shader.
-- [ ] Basic interaction with water. *(in progress)*
-- [ ] Swimming system with buoyancy and diving.
-- [ ] Basic boat buoyancy.
+- [x] Basic interaction with water.
+- [x] Swimming system with buoyancy and diving.
+- [ ] Basic boat buoyancy. *(in progress)*
 - [ ] Getting on and off the boat both on land and in water.
 - [ ] Basic boat controls.
 - [ ] Island and shoreline detection system.
