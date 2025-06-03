@@ -12,9 +12,9 @@ El desarrollo se organizará por fases de complejidad creciente, comenzando por 
 - [x] Movimiento de jugador con físicas.
 - [x] Sistema de cámara con rotación libre.
 - [x] Shader de agua animado.
-- [ ] Interacción básica con agua. *(en progreso)*
-- [ ] Sistema de nado con flotación y sumergirse.
-- [ ] Flotación de bote básico.
+- [x] Interacción básica con agua.
+- [x] Sistema de nado con flotación y sumergirse.
+- [ ] Flotación de bote básico. *(en progreso)*
 - [ ] Subir y bajar del bote tanto en tierra como en el agua.
 - [ ] Sistema básico de control de embarcación.
 - [ ] Sistema de detección de islas y orillas.
