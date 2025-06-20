@@ -1,32 +1,69 @@
 using UnityEngine;
 
 /// <summary>
-/// Permite calcular la altura de una superficie de agua que usa un shader con ondas senoidales
-/// basadas en X, Z y el tiempo, como el WaterWavesShader.
+/// Permite obtener la altura y fase de las olas en una posición dada,
+/// basada en una función seno parametrizable.
+/// Ideal para shaders de agua que animan vértices con la misma lógica.
 /// </summary>
+[DisallowMultipleComponent]
 public class WaterAltitude : MonoBehaviour
 {
-    [Header("Parámetros de la ola (deben coincidir con el shader)")]
+    [Header("Parámetros de la ola")]
+    [Tooltip("Altura máxima de las olas.")]
+    public float waveAmplitude = 0.5f;
+
+    [Tooltip("Frecuencia espacial de las olas (a mayor valor, más ondas por unidad).")]
     public float waveFrequency = 1.0f;
+
+    [Tooltip("Velocidad a la que se propagan las olas (en el tiempo).")]
     public float waveSpeed = 1.0f;
-    public float waveHeight = 0.5f;
+
+    [Tooltip("Layer para ignorar el agua al hacer raycasts hacia el fondo.")]
+    public LayerMask groundMask;
 
     /// <summary>
-    /// Calcula la altura del agua en un punto del mundo replicando la lógica del shader.
+    /// Devuelve la altura de la ola en una posición (x,z) del mundo, sincronizada con el tiempo actual.
     /// </summary>
-    /// <param name="position">Posición en el mundo donde se quiere conocer la altura del agua</param>
-    /// <returns>Altura Y del agua en ese punto</returns>
-    public float GetWaterHeightAtPosition(Vector3 position)
+    public float GetWaterHeightAtPosition(Vector3 worldPosition)
     {
-        float time = Time.time;
+        float wave = Mathf.Sin((worldPosition.x + worldPosition.z) * waveFrequency + Time.time * waveSpeed);
+        return transform.position.y + wave * waveAmplitude;
+    }
 
-        // Calculamos la fase de la onda combinando X y Z
-        float wavePhase = (position.x * waveFrequency) + (position.z * waveFrequency) + (time * waveSpeed);
+    /// <summary>
+    /// Devuelve la fase normalizada de la ola en una posición dada, sin amplitud ni altura base.
+    /// Útil para sincronizar animaciones como el bamboleo o sonido del agua.
+    /// </summary>
+    public float GetWavePhaseAtPosition(Vector3 worldPosition)
+    {
+        return Mathf.Sin((worldPosition.x + worldPosition.z) * waveFrequency + Time.time * waveSpeed);
+    }
 
-        // Aplicamos la función seno y la escala de altura
-        float offsetY = Mathf.Sin(wavePhase) * waveHeight;
-
-        // Sumamos a la altura base del plano (asumimos que este objeto representa el plano de agua)
-        return transform.position.y + offsetY;
+    /// <summary>
+    /// Realiza un raycast hacia abajo para obtener la altura del fondo marino en la posición dada.
+    /// </summary>
+    public float GetBottomHeightAtPosition(Vector3 worldPosition)
+    {
+        Vector3 rayOrigin = worldPosition + Vector3.up * 0.1f; // El float evita autocollision, modificar en base a la altura del jugador
+        Debug.DrawRay(rayOrigin, Vector3.down * 5000f, Color.cyan);
+        if (Physics.Raycast(rayOrigin, Vector3.down, out RaycastHit hit, 5000f, groundMask))
+        {
+            //Debug.Log($"[!] Hit Ground at Y: {hit.point.y}");
+            return hit.point.y;
+        }
+        else
+        {
+            //Debug.LogWarning($"[X] No hit at {rayOrigin} con groundMask: {groundMask.value}");
+            return worldPosition.y - 5000f; // Valor por defecto si no golpea nada
+        }
+    }
+    public Vector3 GetWaveNormalAtPosition(Vector3 worldPosition)
+    {
+        float dx = waveFrequency * Mathf.Cos((worldPosition.x + worldPosition.z) * waveFrequency + Time.time * waveSpeed);
+        float dz = waveFrequency * Mathf.Cos((worldPosition.x + worldPosition.z) * waveFrequency + Time.time * waveSpeed);
+        Vector3 normal = new Vector3(-dx, 1f, -dz).normalized;
+        return normal;
     }
 }
+
+
