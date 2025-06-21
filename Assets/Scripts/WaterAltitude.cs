@@ -8,18 +8,23 @@ using UnityEngine;
 [DisallowMultipleComponent]
 public class WaterAltitude : MonoBehaviour
 {
+
+    //Parámetros utilizados para el player
     [Header("Parámetros de la ola")]
     [Tooltip("Altura máxima de las olas.")]
     public float waveAmplitude = 0.5f;
-
     [Tooltip("Frecuencia espacial de las olas (a mayor valor, más ondas por unidad).")]
     public float waveFrequency = 1.0f;
-
     [Tooltip("Velocidad a la que se propagan las olas (en el tiempo).")]
     public float waveSpeed = 1.0f;
 
+
     [Tooltip("Layer para ignorar el agua al hacer raycasts hacia el fondo.")]
     public LayerMask groundMask;
+
+    [Header("Referencia al material del shader de agua")]
+    [Tooltip("Material que contiene los parámetros de ola en el shader.")]
+    public Material waterMaterial;
 
     /// <summary>
     /// Devuelve la altura de la ola en una posición (x,z) del mundo, sincronizada con el tiempo actual.
@@ -57,6 +62,7 @@ public class WaterAltitude : MonoBehaviour
             return worldPosition.y - 5000f; // Valor por defecto si no golpea nada
         }
     }
+
     public Vector3 GetWaveNormalAtPosition(Vector3 worldPosition)
     {
         float dx = waveFrequency * Mathf.Cos((worldPosition.x + worldPosition.z) * waveFrequency + Time.time * waveSpeed);
@@ -64,6 +70,29 @@ public class WaterAltitude : MonoBehaviour
         Vector3 normal = new Vector3(-dx, 1f, -dz).normalized;
         return normal;
     }
+
+    private void Start()
+    {
+        UpdateWaveParamsFromShader();
+    }
+
+    private void UpdateWaveParamsFromShader()
+    {
+        if (waterMaterial != null)
+        {
+            if (waterMaterial.HasProperty("_WaveAmplitude"))
+                waveAmplitude = waterMaterial.GetFloat("_WaveAmplitude");
+            if (waterMaterial.HasProperty("_WaveFrequency"))
+                waveFrequency = waterMaterial.GetFloat("_WaveFrequency");
+            if (waterMaterial.HasProperty("_WaveSpeed"))
+                waveSpeed = waterMaterial.GetFloat("_WaveSpeed");
+        }
+        else
+        {
+            Debug.LogWarning("[WaterAltitude] Material de agua no asignado. Se usarán valores por defecto.");
+        }
+    }
+
 }
 
 

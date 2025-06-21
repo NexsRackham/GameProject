@@ -24,6 +24,11 @@ public class PlayerMovement : MonoBehaviour
     [Header("Nado")]
     private PlayerWaterInteraction waterInteraction;  // Referencia al sistema de agua
 
+    //Variables para vuelo
+    private bool isFlying = false;
+    private bool shiftHeld = false;
+    public float flightSpeed = 10f;
+
     void Start()
     {
         rb = GetComponent<Rigidbody>();
@@ -90,10 +95,48 @@ public class PlayerMovement : MonoBehaviour
         // Visualización de la esfera de detección del suelo
         Color rayColor = isGrounded ? Color.green : Color.red;
         Debug.DrawRay(groundCheck.position, Vector3.down * groundCheckRadius, rayColor);
+
+        // Detectar combinación ALT + V para cambiar modo vuelo
+        shiftHeld = Input.GetKey(KeyCode.LeftShift);
+
+        if (shiftHeld && Input.GetKeyDown(KeyCode.V))
+        {
+            isFlying = !isFlying;
+            rb.useGravity = !isFlying;
+
+            if (isFlying)
+            {
+                Debug.Log("Modo vuelo activado.");
+            }
+            else
+            {
+                Debug.Log("Modo vuelo desactivado.");
+            }
+        }
+
     }
 
     void FixedUpdate()
     {
+        if (isFlying)
+        {
+            Vector3 moveDir = Vector3.zero;
+
+            // Movimiento horizontal
+            float h = Input.GetAxis("Horizontal"); // A/D
+            float v = Input.GetAxis("Vertical");   // W/S
+            moveDir += transform.forward * v;
+            moveDir += transform.right * h;
+
+            // Subir y bajar
+            if (Input.GetKey(KeyCode.Space)) moveDir += Vector3.up;
+            if (Input.GetKey(KeyCode.LeftControl)) moveDir += Vector3.down;
+
+            rb.velocity = moveDir.normalized * flightSpeed;
+
+            return; // Omitimos movimiento terrestre si estamos volando
+        }
+
         // Si está nadando, la física es controlada por el sistema de nado
         if (waterInteraction != null && waterInteraction.IsSwimming)
             return;
