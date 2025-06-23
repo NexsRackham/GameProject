@@ -58,7 +58,14 @@ public class PlayerClimb : MonoBehaviour
         }
 
         // Movimiento vertical
-        rb.velocity = new Vector3(0f, verticalInput * climbSpeed, 0f);
+        if (Mathf.Approximately(verticalInput, 0f))
+        {
+            rb.velocity = Vector3.zero;
+        }
+        else
+        {
+            rb.velocity = new Vector3(0f, verticalInput * climbSpeed, 0f);
+        }
     }
 
     private void FixedUpdate()
@@ -68,6 +75,7 @@ public class PlayerClimb : MonoBehaviour
             // Mantener X,Z en lateralAnchorPos, Y lo controla rb.velocity
             Vector3 pos = rb.position;
             rb.MovePosition(new Vector3(lateralAnchorPos.x, pos.y, lateralAnchorPos.z));
+            //rb.velocity = Vector3.zero; // Para prevenir que cualquier fuerza residual se acumule
         }
     }
 
@@ -104,6 +112,7 @@ public class PlayerClimb : MonoBehaviour
             
             // Forzamos la rotación mirando hacia esa dirección
             transform.rotation = Quaternion.LookRotation(lookDirection, Vector3.up);
+            rb.angularVelocity = Vector3.zero; // eliminar cualquier rotación residual
         }
 
         Debug.Log("[PlayerClimb] Iniciado modo escalada.");

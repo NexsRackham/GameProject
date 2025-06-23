@@ -36,6 +36,8 @@ public class PlayerWaterInteraction : MonoBehaviour
 
     private float initialWavePhase; // Para almacenar la fase de entrada de la ola
 
+    private PlayerClimb playerClimb;
+
 
     // Señal para avisar al PlayerMovement que está nadando
     public bool IsSwimming { get; private set; } = false;
@@ -47,6 +49,7 @@ public class PlayerWaterInteraction : MonoBehaviour
         originalGravity = rb.useGravity;
         currentOxygen = maxOxygen;
         floatBaseHeight = transform.position.y;
+        playerClimb = GetComponent<PlayerClimb>();
     }
 
     void Update()
@@ -71,6 +74,10 @@ public class PlayerWaterInteraction : MonoBehaviour
     void FixedUpdate()
     {
         IsSwimming = false;
+
+        // Si estamos escalando, ignoramos completamente el agua
+        if (playerClimb != null && playerClimb.IsClimbing())
+            return;
 
         if (isInWater && currentWater != null)
         {
